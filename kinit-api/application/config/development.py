@@ -19,8 +19,8 @@ SQLALCHEMY_DATABASE_TYPE = "mysql"
 Redis 数据库配置
 格式："redis://:密码@地址:端口/数据库名称"
 """
-REDIS_DB_ENABLE = False
-REDIS_DB_URL = "redis://:@localhost:6379/1"
+REDIS_DB_ENABLE = True
+REDIS_DB_URL = "redis://localhost:6379/0"
 
 """
 MongoDB 数据库配置
@@ -28,7 +28,7 @@ MongoDB 数据库配置
 """
 MONGO_DB_ENABLE = True
 MONGO_DB_NAME = "kinit"
-MONGO_DB_URL = f"mongodb://kinit:123456@localhost:27017/?authSource={MONGO_DB_NAME}"
+MONGO_DB_URL = f"mongodb://localhost:27017/?authSource=kinit"
 
 
 """

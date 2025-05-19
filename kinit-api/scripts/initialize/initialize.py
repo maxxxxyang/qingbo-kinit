@@ -164,7 +164,7 @@ class InitializeData:
         """
         执行初始化工作
         """
-        self.migrate_model(env)
+        # self.migrate_model(env)
         await self.generate_menu()
         await self.generate_role()
         await self.generate_dept()
