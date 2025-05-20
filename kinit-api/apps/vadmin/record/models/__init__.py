@@ -9,3 +9,4 @@
 
 from .login import VadminLoginRecord
 from .sms import VadminSMSSendRecord
+from .video_article_fw import VideoArticleFW
