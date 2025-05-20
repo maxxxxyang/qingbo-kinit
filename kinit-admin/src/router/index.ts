@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import type { App } from 'vue'
-import { Layout } from '@/utils/routerHelper'
+import Layout from '@/layout/Layout.vue'
 import { useI18n } from '@/hooks/web/useI18n'
 
 const { t } = useI18n()
@@ -132,6 +132,28 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: t('router.workplace'),
           noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/video',
+    component: Layout,
+    name: 'Video',
+    meta: {
+      title: '视频管理',
+      icon: 'Document',
+      alwaysShow: true
+    },
+    children: [
+      {
+        path: 'article-fw',
+        component: () => import('@/views/Vadmin/Video/ArticleFw.vue'),
+        name: 'VideoArticleFw',
+        meta: {
+          title: '视频稿件管理',
+          icon: 'Document',
+          noCache: false
         }
       }
     ]

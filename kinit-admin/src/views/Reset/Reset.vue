@@ -154,13 +154,13 @@ const getMenu = async () => {
 }
 
 .main-container {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  padding-top: 20px;
   width: 100%;
   height: 100%;
+  padding-top: 20px;
   background-color: var(--app-content-bg-color);
-  position: relative;
+  flex-direction: column;
 }
 
 .main-container .form-container {
@@ -174,7 +174,7 @@ const getMenu = async () => {
 .footer-container {
   position: absolute;
   bottom: 0;
-  margin-bottom: 20px;
   width: 100%;
+  margin-bottom: 20px;
 }
 </style>

@@ -135,14 +135,14 @@ watch(
 
 <style lang="less">
 .center-top-view {
+  display: flex;
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 3px blue;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(6, 30, 93, 0.5);
-  border-top: 2px solid rgba(1, 153, 209, 0.5);
-  box-sizing: border-box;
   padding: 10px 20px;
+  background-color: rgb(6 30 93 / 50%);
+  border-top: 2px solid rgb(1 153 209 / 50%);
+  box-shadow: 0 0 3px blue;
+  box-sizing: border-box;
+  flex-direction: column;
 }
 </style>

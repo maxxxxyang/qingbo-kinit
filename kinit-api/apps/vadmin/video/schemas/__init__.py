@@ -1,0 +1,1 @@
+from .video_article_fw import VideoArticleFw, VideoArticleFwSimpleOut

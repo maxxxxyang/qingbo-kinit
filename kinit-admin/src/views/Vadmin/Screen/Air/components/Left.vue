@@ -47,14 +47,14 @@ const props = defineProps({
 
 <style lang="less">
 .left-view {
+  display: flex;
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 3px blue;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(6, 30, 93, 0.5);
-  border-top: 2px solid rgba(1, 153, 209, 0.5);
   padding: 10px 20px;
+  background-color: rgb(6 30 93 / 50%);
+  border-top: 2px solid rgb(1 153 209 / 50%);
+  box-shadow: 0 0 3px blue;
+  flex-direction: column;
 
   .main-content {
     flex: 1;
@@ -66,28 +66,28 @@ const props = defineProps({
       .border-box-content {
         justify-content: center;
         align-items: center;
-        display: -webkit-flex;
+        display: flex;
       }
 
       .data-view {
         position: relative;
-        height: 100%;
+        display: flex;
         width: 100%;
+        height: 100%;
         justify-content: center;
-        display: -webkit-flex;
 
         .data-title {
-          font-size: 35px;
-          display: block;
           position: absolute;
           top: 40%;
+          display: block;
+          font-size: 35px;
         }
 
         .data-desc {
-          font-size: 14px;
-          display: block;
           position: absolute;
           bottom: 10%;
+          display: block;
+          font-size: 14px;
         }
       }
     }

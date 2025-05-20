@@ -126,14 +126,14 @@ onBeforeUnmount(() => {
 #data-view {
   width: 100%;
   height: 100%;
-  background-color: #030409;
   color: #fff;
+  background-color: #030409;
 
   #dv-full-screen-container {
+    display: flex;
     background-image: url('@/assets/imgs/bg.png');
     background-size: 100% 100%;
     box-shadow: 0 0 3px blue;
-    display: flex;
     flex-direction: column;
   }
 }

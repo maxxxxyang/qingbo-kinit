@@ -238,6 +238,7 @@ defineExpose({
 .auth-manage-main-view .el-drawer .el-drawer__body {
   padding: 0;
 }
+
 .auth-manage-main-view .el-divider.el-divider--horizontal {
   margin: 0;
 }
@@ -245,10 +246,10 @@ defineExpose({
 
 <style scoped lang="less">
 .yxt-divider {
-  background: #409eff;
+  display: inline-block;
   width: 8px;
   height: 20px;
-  display: inline-block;
   margin-right: 10px;
+  background: #409eff;
 }
 </style>

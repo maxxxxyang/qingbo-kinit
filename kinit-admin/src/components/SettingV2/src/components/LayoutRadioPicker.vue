@@ -86,7 +86,7 @@ const layout = computed(() => appStore.getLayout)
       width: 100%;
       height: 25%;
       background-color: #fff;
-      border-radius: 4px 4px 0 4px;
+      border-radius: 4px 4px 0;
       content: '';
     }
   }

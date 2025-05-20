@@ -164,3 +164,8 @@ class CrudGenerate(GenerateBase):
             self.param_class_name
         )
         view.write_generate_code()
+
+if __name__ == '__main__':
+    from apps.vadmin.video.models.video_article_fw import VideoArticleFw
+    crud = CrudGenerate(VideoArticleFw, "视频稿件管理", "video_article_fw")
+    crud.main()

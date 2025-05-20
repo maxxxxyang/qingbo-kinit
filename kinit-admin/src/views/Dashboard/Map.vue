@@ -113,33 +113,33 @@ initMap()
 
 <style scoped lang="less">
 #map-container {
-  padding: 0px;
-  margin: 0px;
   width: 100%;
   height: 800px;
+  padding: 0;
+  margin: 0;
 }
 
 #map-container :deep(.description) {
-  background-color: #fff;
-  height: 50px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: 50px;
   padding: 10px;
-  box-sizing: border-box;
+  font-size: 14px;
+  background-color: #fff;
   border: 2px solid #f05b72;
   border-radius: 5px;
-  font-size: 14px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #map-container :deep(.point) {
   display: inline-block;
   width: 9px;
   height: 9px;
-  border-radius: 50%;
-  background-color: #f05b72;
-  margin-bottom: 1px;
   margin-right: 2px;
+  margin-bottom: 1px;
+  background-color: #f05b72;
+  border-radius: 50%;
 }
 
 #map-container :deep(.name-box) {
@@ -148,40 +148,41 @@ initMap()
 }
 
 #map-container :deep(.alarmDevice) {
-  text-align: center;
-  margin: 0 auto;
+  --webkit-animation-name: 'alarmDeviceBreath'; /* 动画属性名，也就是我们前面keyframes定义的动画名 */
+  --webkit-animation-duration: 1s; /* 动画持续时间 */
+  --webkit-animation-timing-function: ease; /* 动画频率，和transition-timing-function是一样的 */
+  --webkit-animation-delay: 0s; /* 动画延迟时间 */
+  --webkit-animation-iteration-count: infinite; /* 定义循环资料，infinite为无限次 */
+  --webkit-animation-direction: alternate; /* 定义动画方式 */
+
   width: 30px;
   height: 30px;
+  margin: 0 auto;
+  text-align: center;
   background-color: #f13737;
-  box-shadow: 0px 0px 15px #f61212;
   border-radius: 50%;
-  --webkit-animation-name: 'alarmDeviceBreath'; /*动画属性名，也就是我们前面keyframes定义的动画名*/
-  --webkit-animation-duration: 1s; /*动画持续时间*/
-  --webkit-animation-timing-function: ease; /*动画频率，和transition-timing-function是一样的*/
-  --webkit-animation-delay: 0s; /*动画延迟时间*/
-  --webkit-animation-iteration-count: infinite; /*定义循环资料，infinite为无限次*/
-  --webkit-animation-direction: alternate; /*定义动画方式*/
+  box-shadow: 0 0 15px #f61212;
 }
 </style>
 
 <style>
 @keyframes alarmDeviceBreath {
   0% {
-    margin-left: 0;
-    margin-top: 0;
     width: 30px;
     height: 30px;
-    box-shadow: 0px 0px 15px #f61212;
+    margin-top: 0;
+    margin-left: 0;
     opacity: 1.2;
+    box-shadow: 0 0 15px #f61212;
   }
 
   100% {
-    margin-left: 5px;
-    margin-top: 5px;
     width: 20px;
     height: 20px;
-    box-shadow: 0px 0px 10px #f61212;
+    margin-top: 5px;
+    margin-left: 5px;
     opacity: 0.6;
+    box-shadow: 0 0 10px #f61212;
   }
 }
 </style>
