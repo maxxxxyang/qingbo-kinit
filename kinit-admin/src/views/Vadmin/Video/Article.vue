@@ -6,10 +6,20 @@
       :data="list"
       :loading="loading"
       :pagination="pagination"
+      v-model:currentPage="pagination.page"
+      v-model:pageSize="pagination.pageSize"
       @refresh="fetchList"
       @edit="handleEdit"
       @delete="handleDelete"
-    />
+      @sort-change="handleSortChange"
+    >
+      <template #title="{ row }">
+        <a :href="row.url" target="_blank" rel="noopener noreferrer">{{ row.title }}</a>
+      </template>
+      <template #publishTime="{ row }">
+        {{ row.publishTime ? dayjs(row.publishTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+      </template>
+    </Table>
     <Dialog v-model:visible="dialogVisible" title="编辑稿件" @ok="handleSave">
       <Form :model="form" :rules="rules" ref="formRef">
         <el-form-item label="稿件标题" prop="title">
@@ -31,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
 import { Dialog } from '@/components/Dialog'
@@ -43,73 +53,106 @@ import {
   updateArticle,
   deleteArticle
 } from '@/api/vadmin/video/article'
+import dayjs from 'dayjs'
 
 const list = ref([])
 const loading = ref(false)
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const columns = [
-  { field: 'id', prop: 'id', label: 'ID', width: 60, show: true },
-  { field: 'articleID', prop: 'articleID', label: '标题相似值', show: true },
-  { field: 'sameid', prop: 'sameid', label: '正文相似值', show: true },
-  { field: 'sameid3', prop: 'sameid3', label: '正文相似值3', show: true },
-  { field: 'articletype', prop: 'articletype', label: '稿件类型', show: true },
-  { field: 'title', prop: 'title', label: '稿件标题', show: true },
-  { field: 'publishTime', prop: 'publishTime', label: '发布时间', show: true },
-  { field: 'url', prop: 'url', label: '原网url', show: true },
-  { field: 'dataSourceID', prop: 'dataSourceID', label: '数据源ID', show: true },
+  { field: 'id', prop: 'id', label: '编号', width: 100, show: true },
+  { field: 'articletype', prop: 'articletype', label: '稿件类型', show: true, width: 100 },
+  { field: 'title', prop: 'title', label: '稿件标题', show: true, slot: 'title', width: 240 },
   { field: 'dataSourceName', prop: 'dataSourceName', label: '数据源名称', show: true },
-  { field: 'mediaID', prop: 'mediaID', label: '媒体ID', show: true },
-  { field: 'mediaName', prop: 'mediaName', label: '媒体名称', show: true },
-  { field: 'keywords', prop: 'keywords', label: '关键词', show: true },
-  { field: 'readcount', prop: 'readcount', label: '阅读量', show: true },
-  { field: 'agreecount', prop: 'agreecount', label: '点赞量', show: true },
-  { field: 'forwardcount', prop: 'forwardcount', label: '转发量', show: true },
-  { field: 'commentcount', prop: 'commentcount', label: '评论量', show: true },
-  { field: 'collectcount', prop: 'collectcount', label: '收藏量', show: true },
-  { field: 'watchcount', prop: 'watchcount', label: '在看量', show: true },
-  { field: 'degree', prop: 'degree', label: '热度', show: true },
-  { field: 'video_article_id', prop: 'video_article_id', label: '视频关联id', show: true },
-  { field: 'created_at', prop: 'created_at', label: '创建时间', show: true },
-  { field: 'updated_at', prop: 'updated_at', label: '更新时间', show: true },
-  { field: 'deleted_at', prop: 'deleted_at', label: '删除时间', show: true },
+  {
+    field: 'readcount',
+    prop: 'readcount',
+    label: '阅读量',
+    show: true,
+    width: 80,
+    sortable: 'custom'
+  },
+  {
+    field: 'agreecount',
+    prop: 'agreecount',
+    label: '点赞量',
+    show: true,
+    width: 80,
+    sortable: 'custom'
+  },
+  {
+    field: 'forwardcount',
+    prop: 'forwardcount',
+    label: '转发量',
+    show: true,
+    width: 80,
+    sortable: 'custom'
+  },
+  {
+    field: 'commentcount',
+    prop: 'commentcount',
+    label: '评论量',
+    show: true,
+    width: 80,
+    sortable: 'custom'
+  },
+  {
+    field: 'collectcount',
+    prop: 'collectcount',
+    label: '收藏量',
+    show: true,
+    width: 80,
+    sortable: 'custom'
+  },
+  {
+    field: 'watchcount',
+    prop: 'watchcount',
+    label: '在看量',
+    show: true,
+    width: 80,
+    sortable: 'custom'
+  },
+  { field: 'degree', prop: 'degree', label: '热度', show: true, width: 80, sortable: 'custom' },
+  {
+    field: 'publishTime',
+    prop: 'publishTime',
+    label: '发布时间',
+    show: true,
+    slot: 'publishTime',
+    sortable: 'custom'
+  },
   { field: 'actions', prop: 'actions', label: '操作', slot: 'actions', width: 180, show: true }
 ]
 const dialogVisible = ref(false)
 const form = reactive({
   id: null,
-  articleID: '',
-  sameid: '',
-  sameid3: '',
   articletype: '',
   title: '',
   publishTime: '',
   url: '',
-  dataSourceID: '',
   dataSourceName: '',
-  mediaID: '',
-  mediaName: '',
-  keywords: '',
   readcount: 0,
   agreecount: 0,
   forwardcount: 0,
   commentcount: 0,
   collectcount: 0,
   watchcount: 0,
-  degree: 0,
-  video_article_id: 0,
-  created_at: '',
-  updated_at: '',
-  deleted_at: ''
+  degree: 0
 })
 const rules = {
   title: [{ required: true, message: '请输入标题' }],
   articletype: [{ required: true, message: '请输入稿件类型' }]
 }
 const formRef = ref()
+const sortParams = reactive({ field: '', order: '' })
 
 function fetchList() {
   loading.value = true
-  getArticles({ page: pagination.page, limit: pagination.pageSize })
+  getArticles({
+    page: pagination.page,
+    limit: pagination.pageSize,
+    v_order_field: sortParams.field,
+    v_order: sortParams.order
+  })
     .then((res) => {
       list.value = res.data
       pagination.total = res.count || res.total || 0
@@ -136,6 +179,21 @@ function handleSave() {
     })
   })
 }
+
+function handleSortChange({ prop, order }) {
+  // 只处理量化数据字段
+  sortParams.field = prop
+  sortParams.order = order === 'descending' ? 'desc' : order === 'ascending' ? 'asc' : ''
+  pagination.page = 1
+  fetchList()
+}
+
+watch(
+  () => [pagination.page, pagination.pageSize],
+  () => {
+    fetchList()
+  }
+)
 
 onMounted(fetchList)
 </script>

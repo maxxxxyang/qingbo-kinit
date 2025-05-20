@@ -6,7 +6,7 @@
 # @IDE            : PyCharm
 # @desc           : 数据访问层
 
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.crud import DalBase
 from . import models, schemas
@@ -31,13 +31,23 @@ class VideoArticleFwDal(DalBase):
             return VideoArticleFwSimpleOut.model_validate(data).model_dump()
         return None
 
-    async def get_datas(self, page: int = 1, limit: int = 10, **kwargs):
+    async def get_datas(self, page: int = 1, limit: int = 10, v_order_field: str = None, v_order: str = None, **kwargs):
         sql = select(self.model).where(self.model.deleted_at == None)
+        # 排序
+        if v_order_field and hasattr(self.model, v_order_field):
+            order_col = getattr(self.model, v_order_field)
+            if v_order == 'desc':
+                sql = sql.order_by(order_col.desc())
+            elif v_order == 'asc':
+                sql = sql.order_by(order_col.asc())
+        # 统计总数
+        count_sql = select(func.count()).select_from(self.model).where(self.model.deleted_at == None)
+        total = (await self.db.execute(count_sql)).scalar()
+        # 分页
         sql = sql.offset((page - 1) * limit).limit(limit)
         result = await self.db.execute(sql)
         datas = result.scalars().all()
-        count = len(datas)
-        return [VideoArticleFwSimpleOut.model_validate(i).model_dump() for i in datas], count
+        return [VideoArticleFwSimpleOut.model_validate(i).model_dump() for i in datas], total
 
     async def delete_datas(self, ids: list[int], v_soft: bool = False, **kwargs) -> None:
         if v_soft:
