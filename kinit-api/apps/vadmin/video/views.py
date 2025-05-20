@@ -24,7 +24,7 @@ app = APIRouter()
 ###########################################################
 @app.get("/article", summary="获取视频稿件列表", tags=["视频稿件管理"])
 async def get_video_article_fw_list(p: params.VideoArticleFwParams = Depends(), auth: Auth = Depends(AllUserAuth())):
-    datas, count = await crud.VideoArticleFwDal(auth.db).get_datas(**p.dict(), v_return_count=True)
+    datas, count = await crud.VideoArticleFwDal(auth.db).get_datas(**p.dict())
     return SuccessResponse(datas, count=count)
 
 
@@ -47,5 +47,5 @@ async def put_video_article_fw(data_id: int, data: schemas.VideoArticleFw, auth:
 @app.get("/article/{data_id}", summary="获取视频稿件信息", tags=["视频稿件管理"])
 async def get_video_article_fw(data_id: int, db: AsyncSession = Depends(db_getter)):
     schema = schemas.VideoArticleFwSimpleOut
-    return SuccessResponse(await crud.VideoArticleFwDal(db).get_data(data_id, v_schema=schema))
+    return SuccessResponse(await crud.VideoArticleFwDal(db).get_data(data_id))
 

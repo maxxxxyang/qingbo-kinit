@@ -50,8 +50,7 @@ const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const columns = [
   { field: 'id', prop: 'id', label: 'ID', width: 60, show: true },
   { field: 'title', prop: 'title', label: '标题', show: true },
-  { field: 'author', prop: 'author', label: '作者', show: true },
-  { field: 'status', prop: 'status', label: '状态', show: true },
+  { field: 'url', prop: 'url', label: '稿件URL', show: true },
   { field: 'created_at', prop: 'created_at', label: '创建时间', show: true },
   { field: 'actions', prop: 'actions', label: '操作', slot: 'actions', width: 180, show: true }
 ]
