@@ -21,8 +21,9 @@ getSystemConfig()
 
 <style scoped lang="less">
 .content-view {
-  height: 100%;
   padding: 20px;
-  overflow: hidden scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
 }
 </style>

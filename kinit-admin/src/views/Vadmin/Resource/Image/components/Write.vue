@@ -200,11 +200,11 @@ defineExpose({
 
 <style lang="less">
 .resource-image-uploader .el-upload {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
   transition: var(--el-transition-duration-fast);
 
   .el-upload-dragger {
@@ -212,12 +212,12 @@ defineExpose({
   }
 
   .resource-image-uploader-icon {
-    display: flex;
-    width: 148px;
-    height: 148px;
     font-size: 28px;
     color: #8c939d;
+    width: 148px;
+    height: 148px;
     text-align: center;
+    display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;

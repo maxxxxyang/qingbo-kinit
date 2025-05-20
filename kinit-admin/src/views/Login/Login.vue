@@ -1,19 +1,35 @@
 <script setup lang="ts">
-import { LoginForm } from './components'
+import { LoginForm, TelephoneCodeForm } from './components'
 import { ThemeSwitch } from '@/components/ThemeSwitch'
 import { LocaleDropdown } from '@/components/LocaleDropdown'
 import { useI18n } from '@/hooks/web/useI18n'
+import { underlineToHump } from '@/utils'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
-import { computed } from 'vue'
+import { ref } from 'vue'
 import { ElScrollbar } from 'element-plus'
+import { computed } from 'vue'
 import { ElButton } from 'element-plus'
 
 const { getPrefixCls } = useDesign()
+
 const prefixCls = getPrefixCls('login')
+
 const appStore = useAppStore()
+
 const { t } = useI18n()
+
+const isPasswordLogin = ref(true)
 const logo = computed(() => appStore.getLogoImage)
+
+const toTelephoneLogin = () => {
+  isPasswordLogin.value = false
+}
+
+const toPasswordLogin = () => {
+  isPasswordLogin.value = true
+}
+
 const icpNumber = computed(() => appStore.getIcpNumber)
 const toICO = () => {
   window.open('https://beian.miit.gov.cn/#/Integrated/index')
@@ -32,7 +48,7 @@ const toICO = () => {
         >
           <div class="flex items-center relative text-white">
             <img :src="logo" alt="" class="w-48px h-48px mr-10px" />
-            <span class="text-20px font-bold">青波大数据管理平台2.0</span>
+            <span class="text-20px font-bold">{{ underlineToHump(appStore.getTitle) }}</span>
           </div>
           <div class="flex justify-center items-center h-[calc(100%-60px)]">
             <TransitionGroup
@@ -40,7 +56,11 @@ const toICO = () => {
               tag="div"
               enter-active-class="animate__animated animate__bounceInLeft"
             >
-              <div class="text-3xl text-white font-bold" key="2">欢迎登录青波大数据管理平台2.0</div>
+              <img src="@/assets/svgs/login-box-bg.svg" key="1" alt="" class="w-350px" />
+              <div class="text-3xl text-white" key="2">{{ t('login.welcome') }}</div>
+              <div class="mt-5 font-normal text-white text-14px" key="3">
+                {{ t('login.message') }}
+              </div>
             </TransitionGroup>
           </div>
         </div>
@@ -50,8 +70,9 @@ const toICO = () => {
           >
             <div class="flex items-center at-2xl:hidden at-xl:hidden">
               <img :src="logo" alt="" class="w-48px h-48px mr-10px" />
-              <span class="text-20px font-bold">青波大数据管理平台2.0</span>
+              <span class="text-20px font-bold">{{ underlineToHump(appStore.getTitle) }}</span>
             </div>
+
             <div class="flex justify-end items-center space-x-10px">
               <ThemeSwitch />
               <LocaleDropdown class="lt-xl:text-white dark:text-white" />
@@ -61,7 +82,16 @@ const toICO = () => {
             <div
               class="h-full flex items-center m-auto w-[100%] at-2xl:max-w-500px at-xl:max-w-500px at-md:max-w-500px at-lg:max-w-500px"
             >
-              <LoginForm class="p-20px h-auto m-auto lt-xl:rounded-3xl lt-xl:light:bg-white" />
+              <LoginForm
+                v-if="isPasswordLogin"
+                class="p-20px h-auto m-auto lt-xl:rounded-3xl lt-xl:light:bg-white"
+                @to-telephone="toTelephoneLogin"
+              />
+              <TelephoneCodeForm
+                v-else
+                class="p-20px h-auto m-auto lt-xl:rounded-3xl lt-xl:light:bg-white"
+                @to-password="toPasswordLogin"
+              />
             </div>
           </Transition>
           <div class="text-14px text-white font-normal absolute bottom-5 right-10">

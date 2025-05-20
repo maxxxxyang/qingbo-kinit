@@ -36,11 +36,11 @@ const props = defineProps({
 
     .menu-item-view {
       float: left;
+      line-height: 80px;
       margin: 0 30px;
       font-size: 22px;
-      font-weight: bold;
-      line-height: 80px;
       color: #909399;
+      font-weight: bold;
 
       &:first-of-type {
         margin-left: 50px;

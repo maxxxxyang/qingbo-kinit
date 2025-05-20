@@ -281,23 +281,23 @@ getData()
 <style lang="less">
 .system-settings-basic-image-uploader {
   .logo-image {
-    display: block;
     width: 178px;
     height: 178px;
+    display: block;
   }
 
   .ico-image {
-    display: block;
     width: 100px;
     height: 100px;
+    display: block;
   }
 
   .el-upload {
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
     border: 1px dashed var(--el-border-color);
     border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
     transition: var(--el-transition-duration-fast);
   }
 
@@ -306,18 +306,18 @@ getData()
   }
 
   .el-icon.logo-image-uploader-icon {
-    width: 178px;
-    height: 178px;
     font-size: 28px;
     color: #8c939d;
+    width: 178px;
+    height: 178px;
     text-align: center;
   }
 
   .el-icon.ico-image-uploader-icon {
-    width: 100px;
-    height: 100px;
     font-size: 28px;
     color: #8c939d;
+    width: 100px;
+    height: 100px;
     text-align: center;
   }
 }
