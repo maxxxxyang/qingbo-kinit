@@ -29,3 +29,6 @@ ENV/
 __pycache__
 !migrations/__init__.py
 *.pyc
+
+# alembic 配置文件不提交
+alembic.ini
