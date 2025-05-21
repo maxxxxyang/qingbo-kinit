@@ -11,7 +11,9 @@ from core.dependencies import Paging, QueryParams
 
 
 class VideoArticleFwParams(QueryParams):
-    def __init__(self, articletype: str = Query(None), title: str = Query(None), params: Paging = Depends()):
+    def __init__(self, articletype: str = Query(None), title: str = Query(None), publishTimeStart: str = Query(None), publishTimeEnd: str = Query(None), params: Paging = Depends()):
         super().__init__(params)
         self.articletype = articletype
         self.title = title
+        self.publishTimeStart = publishTimeStart
+        self.publishTimeEnd = publishTimeEnd

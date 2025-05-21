@@ -32,13 +32,17 @@ class VideoArticleFwDal(DalBase):
             return VideoArticleFwSimpleOut.model_validate(data).model_dump()
         return None
 
-    async def get_datas(self, page: int = 1, limit: int = 10, v_order_field: str = None, v_order: str = None, articletype: str = None, title: str = None, **kwargs):
+    async def get_datas(self, page: int = 1, limit: int = 10, v_order_field: str = None, v_order: str = None, articletype: str = None, title: str = None, publishTimeStart: str = None, publishTimeEnd: str = None, **kwargs):
         sql = select(self.model).where(self.model.deleted_at == None)
         # 新增筛选条件
         if articletype:
             sql = sql.where(self.model.articletype == articletype)
         if title:
             sql = sql.where(self.model.title.like(f"%{title}%"))
+        if publishTimeStart:
+            sql = sql.where(self.model.publishTime >= publishTimeStart)
+        if publishTimeEnd:
+            sql = sql.where(self.model.publishTime <= publishTimeEnd)
         # 排序
         if v_order_field and hasattr(self.model, v_order_field):
             order_col = getattr(self.model, v_order_field)
@@ -54,6 +58,10 @@ class VideoArticleFwDal(DalBase):
             count_sql = count_sql.where(self.model.articletype == articletype)
         if title:
             count_sql = count_sql.where(self.model.title.like(f"%{title}%"))
+        if publishTimeStart:
+            count_sql = count_sql.where(self.model.publishTime >= publishTimeStart)
+        if publishTimeEnd:
+            count_sql = count_sql.where(self.model.publishTime <= publishTimeEnd)
         total = (await self.db.execute(count_sql)).scalar()
         # 分页
         sql = sql.offset((page - 1) * limit).limit(limit)
