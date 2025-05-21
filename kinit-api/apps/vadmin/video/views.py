@@ -7,7 +7,7 @@
 # @desc           : 路由，视图文件
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from . import models, schemas, crud, params
 from core.dependencies import IdList
 from apps.vadmin.auth.utils.current import AllUserAuth
@@ -50,6 +50,10 @@ async def get_video_article_fw(data_id: int, db: AsyncSession = Depends(db_gette
     return SuccessResponse(await crud.VideoArticleFwDal(db).get_data(data_id))
 
 @app.get("/rank/douyin", summary="抖音排行榜", tags=["排行榜"])
-async def get_douyin_rank(auth: Auth = Depends(AllUserAuth())):
-    data = await crud.VideoArticleFwDal(auth.db).get_douyin_rank()
-    return SuccessResponse(data)
+async def get_douyin_rank(
+    page: int = Query(1, description="页码"),
+    limit: int = Query(10, description="每页条数"),
+    auth: Auth = Depends(AllUserAuth())
+):
+    data, total = await crud.VideoArticleFwDal(auth.db).get_douyin_rank(page=page, limit=limit)
+    return SuccessResponse(data, count=total)

@@ -121,11 +121,15 @@ function fetchList() {
     params.end = params.publishTimeRange[1]
   }
   delete params.publishTimeRange
-  getDouyinRank(params)
+  getDouyinRank({
+    page: pagination.page,
+    limit: pagination.pageSize,
+    ...params
+  })
     .then((res) => {
       if (res && res.code === 200) {
         list.value = res.data || []
-        pagination.total = res.data?.length || 0
+        pagination.total = res.count || res.total || 0
       } else {
         ElMessage.error('获取榜单失败')
       }
