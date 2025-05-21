@@ -100,3 +100,22 @@ class VideoArticleFwDal(DalBase):
             setattr(obj, key, value)
         await self.db.flush(obj)
         return obj
+
+    async def get_douyin_rank(self, limit: int = 20):
+        sql = select(self.model).where(
+            self.model.deleted_at == None,
+            self.model.dataSourceName.like('%抖音%')
+        )
+        # 计算指数：点赞数*50+评论数*20+转发*20
+        # SQLAlchemy不支持直接在order_by里写表达式排序，所以用Python排序
+        result = await self.db.execute(sql)
+        datas = result.scalars().all()
+        def calc_score(item):
+            return (item.agreecount or 0) * 50 + (item.commentcount or 0) * 20 + (item.forwardcount or 0) * 20
+        datas = sorted(datas, key=calc_score, reverse=True)[:limit]
+        out = []
+        for i in datas:
+            item = VideoArticleFwSimpleOut.model_validate(i).model_dump()
+            item['douyin_score'] = calc_score(i)
+            out.append(item)
+        return out

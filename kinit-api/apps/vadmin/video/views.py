@@ -49,3 +49,7 @@ async def get_video_article_fw(data_id: int, db: AsyncSession = Depends(db_gette
     schema = schemas.VideoArticleFwSimpleOut
     return SuccessResponse(await crud.VideoArticleFwDal(db).get_data(data_id))
 
+@app.get("/rank/douyin", summary="抖音排行榜", tags=["排行榜"])
+async def get_douyin_rank(auth: Auth = Depends(AllUserAuth())):
+    data = await crud.VideoArticleFwDal(auth.db).get_douyin_rank()
+    return SuccessResponse(data)
