@@ -1,5 +1,6 @@
 <template>
-  <ContentWrap title="视频稿件管理">
+  <ContentWrap title="第三方稿件管理">
+    <Search :schema="searchSchema" @search="setSearchParams" @reset="setSearchParams" />
     <Table
       ref="tableRef"
       :columns="columns"
@@ -54,13 +55,15 @@ import {
   deleteArticle
 } from '@/api/vadmin/video/article'
 import dayjs from 'dayjs'
+import { Search } from '@/components/Search'
+import { FormSchema } from '@/components/Form'
 
 const list = ref([])
 const loading = ref(false)
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const columns = [
   { field: 'id', prop: 'id', label: '编号', width: 100, show: true },
-  { field: 'articletype', prop: 'articletype', label: '稿件类型', show: true, width: 100 },
+  { field: 'articletype', prop: 'articletype', label: '稿件类型', show: true, width: 140 },
   { field: 'title', prop: 'title', label: '稿件标题', show: true, slot: 'title', width: 240 },
   { field: 'dataSourceName', prop: 'dataSourceName', label: '数据源名称', show: true },
   {
@@ -144,6 +147,38 @@ const rules = {
 }
 const formRef = ref()
 const sortParams = reactive({ field: '', order: '' })
+const searchSchema = reactive<FormSchema[]>([
+  {
+    field: 'articletype',
+    label: '稿件类型',
+    component: 'Select',
+    componentProps: {
+      clearable: true,
+      style: { width: '180px' },
+      options: [
+        { label: '微信', value: '微信' },
+        { label: '微博', value: '微博' },
+        { label: '第三方平台入驻媒体号', value: '第三方平台入驻媒体号' }
+      ]
+    }
+  },
+  {
+    field: 'title',
+    label: '标题',
+    component: 'Input',
+    componentProps: {
+      clearable: true,
+      style: { width: '200px' }
+    }
+  }
+])
+
+const searchParams = ref({})
+const setSearchParams = (data: any) => {
+  pagination.page = 1
+  searchParams.value = data
+  fetchList()
+}
 
 function fetchList() {
   loading.value = true
@@ -151,7 +186,8 @@ function fetchList() {
     page: pagination.page,
     limit: pagination.pageSize,
     v_order_field: sortParams.field,
-    v_order: sortParams.order
+    v_order: sortParams.order,
+    ...searchParams.value
   })
     .then((res) => {
       list.value = res.data

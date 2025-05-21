@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.crud import DalBase
 from . import models, schemas
 from .schemas import VideoArticleFwSimpleOut
+from datetime import datetime
 
 
 class VideoArticleFwDal(DalBase):
@@ -31,8 +32,13 @@ class VideoArticleFwDal(DalBase):
             return VideoArticleFwSimpleOut.model_validate(data).model_dump()
         return None
 
-    async def get_datas(self, page: int = 1, limit: int = 10, v_order_field: str = None, v_order: str = None, **kwargs):
+    async def get_datas(self, page: int = 1, limit: int = 10, v_order_field: str = None, v_order: str = None, articletype: str = None, title: str = None, **kwargs):
         sql = select(self.model).where(self.model.deleted_at == None)
+        # 新增筛选条件
+        if articletype:
+            sql = sql.where(self.model.articletype == articletype)
+        if title:
+            sql = sql.where(self.model.title.like(f"%{title}%"))
         # 排序
         if v_order_field and hasattr(self.model, v_order_field):
             order_col = getattr(self.model, v_order_field)
@@ -40,14 +46,32 @@ class VideoArticleFwDal(DalBase):
                 sql = sql.order_by(order_col.desc())
             elif v_order == 'asc':
                 sql = sql.order_by(order_col.asc())
+        else:
+            sql = sql.order_by(self.model.id.desc())
         # 统计总数
         count_sql = select(func.count()).select_from(self.model).where(self.model.deleted_at == None)
+        if articletype:
+            count_sql = count_sql.where(self.model.articletype == articletype)
+        if title:
+            count_sql = count_sql.where(self.model.title.like(f"%{title}%"))
         total = (await self.db.execute(count_sql)).scalar()
         # 分页
         sql = sql.offset((page - 1) * limit).limit(limit)
         result = await self.db.execute(sql)
         datas = result.scalars().all()
-        return [VideoArticleFwSimpleOut.model_validate(i).model_dump() for i in datas], total
+        result_list = []
+        for i in datas:
+            item = VideoArticleFwSimpleOut.model_validate(i).model_dump()
+            if item.get('publishTime'):
+                if isinstance(item['publishTime'], datetime):
+                    item['publishTime'] = item['publishTime'].strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    try:
+                        item['publishTime'] = datetime.fromisoformat(str(item['publishTime'])).strftime('%Y-%m-%d %H:%M:%S')
+                    except Exception:
+                        pass
+            result_list.append(item)
+        return result_list, total
 
     async def delete_datas(self, ids: list[int], v_soft: bool = False, **kwargs) -> None:
         if v_soft:
