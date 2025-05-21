@@ -20,6 +20,10 @@
       <template #publishTime="{ row }">
         {{ row.publishTime ? dayjs(row.publishTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
       </template>
+      <template #actions="{ row }">
+        <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
+        <el-button type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
+      </template>
     </Table>
     <Dialog v-model:visible="dialogVisible" title="编辑稿件" @ok="handleSave">
       <Form :model="form" :rules="rules" ref="formRef">
@@ -41,7 +45,7 @@
   </ContentWrap>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { ref, reactive, onMounted, watch } from 'vue'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
@@ -57,6 +61,7 @@ import {
 import dayjs from 'dayjs'
 import { Search } from '@/components/Search'
 import { FormSchema } from '@/components/Form'
+import { BaseButton } from '@/components/Button'
 
 const list = ref([])
 const loading = ref(false)
@@ -71,7 +76,7 @@ const columns = [
     prop: 'readcount',
     label: '阅读量',
     show: true,
-    width: 80,
+    width: 100,
     sortable: 'custom'
   },
   {
@@ -79,7 +84,7 @@ const columns = [
     prop: 'agreecount',
     label: '点赞量',
     show: true,
-    width: 80,
+    width: 100,
     sortable: 'custom'
   },
   {
@@ -87,7 +92,7 @@ const columns = [
     prop: 'forwardcount',
     label: '转发量',
     show: true,
-    width: 80,
+    width: 100,
     sortable: 'custom'
   },
   {
@@ -95,7 +100,7 @@ const columns = [
     prop: 'commentcount',
     label: '评论量',
     show: true,
-    width: 80,
+    width: 100,
     sortable: 'custom'
   },
   {
@@ -103,7 +108,7 @@ const columns = [
     prop: 'collectcount',
     label: '收藏量',
     show: true,
-    width: 80,
+    width: 100,
     sortable: 'custom'
   },
   {
@@ -111,7 +116,7 @@ const columns = [
     prop: 'watchcount',
     label: '在看量',
     show: true,
-    width: 80,
+    width: 100,
     sortable: 'custom'
   },
   { field: 'degree', prop: 'degree', label: '热度', show: true, width: 80, sortable: 'custom' },
@@ -123,7 +128,32 @@ const columns = [
     slot: 'publishTime',
     sortable: 'custom'
   },
-  { field: 'actions', prop: 'actions', label: '操作', slot: 'actions', width: 180, show: true }
+  {
+    field: 'actions',
+    prop: 'actions',
+    label: '操作',
+    width: 200,
+    show: true,
+    slots: {
+      default: (data: any) => {
+        const row = data.row
+        return (
+          <>
+            {row.url && (
+              <BaseButton
+                type="success"
+                link
+                size="small"
+                onClick={() => window.open(row.url, '_blank')}
+              >
+                原文链接
+              </BaseButton>
+            )}
+          </>
+        )
+      }
+    }
+  }
 ]
 const dialogVisible = ref(false)
 const form = reactive({
@@ -170,6 +200,19 @@ const searchSchema = reactive<FormSchema[]>([
       clearable: true,
       style: { width: '200px' }
     }
+  },
+  {
+    field: 'publishTimeRange',
+    label: '发布时间',
+    component: 'DatePicker',
+    componentProps: {
+      type: 'datetimerange',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      startPlaceholder: '开始时间',
+      endPlaceholder: '结束时间',
+      style: { width: '320px' },
+      clearable: true
+    }
   }
 ])
 
@@ -182,12 +225,18 @@ const setSearchParams = (data: any) => {
 
 function fetchList() {
   loading.value = true
+  let params = { ...searchParams.value }
+  if (params.publishTimeRange && params.publishTimeRange.length === 2) {
+    params.publishTimeStart = params.publishTimeRange[0]
+    params.publishTimeEnd = params.publishTimeRange[1]
+  }
+  delete params.publishTimeRange
   getArticles({
     page: pagination.page,
     limit: pagination.pageSize,
     v_order_field: sortParams.field,
     v_order: sortParams.order,
-    ...searchParams.value
+    ...params
   })
     .then((res) => {
       list.value = res.data
