@@ -95,8 +95,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           replacement: 'vue-i18n/dist/vue-i18n.cjs.js'
         },
         {
-          find: /\@\//,
-          replacement: `${pathResolve('src')}/`
+          find: '@',
+          replacement: pathResolve('src')
         }
       ]
     },

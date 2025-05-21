@@ -141,7 +141,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     component: Layout,
     name: 'Video',
     meta: {
-      title: '视频管理',
+      title: '第三方稿件管理',
       icon: 'ep:video-play',
       alwaysShow: true
     },
@@ -151,7 +151,28 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         component: () => import('@/views/Vadmin/Video/Article.vue'),
         name: 'VideoArticle',
         meta: {
-          title: '视频稿件管理',
+          title: '第三方稿件管理',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/rank',
+    component: Layout,
+    name: 'Rank',
+    meta: {
+      title: '排行榜',
+      icon: 'ep:trophy',
+      alwaysShow: true
+    },
+    children: [
+      {
+        path: 'douyin',
+        component: () => import('@/views/Vadmin/Rank/DouyinRank.vue'),
+        name: 'DouyinRank',
+        meta: {
+          title: '抖音榜',
           noCache: true
         }
       }
